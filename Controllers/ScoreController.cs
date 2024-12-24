@@ -10,6 +10,12 @@ namespace HighScoreAPI.Controllers
     {
         public ScoreController() { }
 
+        [HttpGet("/hello")]
+        public IActionResult Hello()
+        {
+            return Ok("Hello!");
+        }
+
         [HttpGet("/get-all-scores")]
         public IActionResult GetAllScores()
         {
