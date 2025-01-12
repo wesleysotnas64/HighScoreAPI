@@ -10,12 +10,6 @@ namespace HighScoreAPI.Controllers
     {
         public ScoreController() { }
 
-        [HttpGet("/hello")]
-        public IActionResult Hello()
-        {
-            return Ok("Hello!");
-        }
-
         [HttpGet("/get-all-scores")]
         public IActionResult GetAllScores()
         {
@@ -23,6 +17,17 @@ namespace HighScoreAPI.Controllers
 
             ConnectionService connection = new();
             scores = connection.GetAllScores();
+
+            return Ok(scores);
+        }
+
+        [HttpGet("/get-vegan-snake-scores")]
+        public IActionResult GetVeganSnakeScores()
+        {
+            List<ScoreEntity> scores = [];
+
+            ConnectionService connection = new();
+            scores = connection.GetScoresByGameCode("VEGANSNAKE");
 
             return Ok(scores);
         }

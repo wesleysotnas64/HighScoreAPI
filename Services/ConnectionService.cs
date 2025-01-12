@@ -70,5 +70,48 @@ namespace HighScoreAPI.Services
 
             return scores;
         }
+
+        public List<ScoreEntity> GetScoresByGameCode(string gameCode)
+        {
+            List<ScoreEntity> scores = [];
+
+            try
+            {
+                OpenConnection();
+
+                string query = @"SELECT * FROM score_games 
+                    WHERE game_code = @gameCode 
+                    ORDER BY player_score DESC;"
+                ;
+
+                using var cmd = new NpgsqlCommand(query, _connection);
+                cmd.Parameters.AddWithValue("gameCode", gameCode);
+
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    scores.Add(new ScoreEntity
+                    {
+                        Id = reader.GetInt32(0),
+                        GameCode = reader.GetString(1),
+                        PlayerName = reader.GetString(2),
+                        PlayerScore = reader.GetInt32(3),
+                        CreateTime = reader.GetDateTime(4)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Logar ou tratar o erro, conforme sua necessidade
+                throw new Exception("Erro ao buscar pontuações: " + ex.Message);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return scores;
+        }
+
     }
 }
