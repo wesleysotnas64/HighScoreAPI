@@ -32,5 +32,21 @@ namespace HighScoreAPI.Controllers
             return Ok(scores);
         }
 
+        [HttpPost("/register-score")]
+        public IActionResult RegisterScore([FromBody] ScoreEntity score)
+        {
+            if (score == null || string.IsNullOrWhiteSpace(score.GameCode) || string.IsNullOrWhiteSpace(score.PlayerName))
+                return BadRequest("Invalid score data. GameCode and PlayerName are required.");
+
+            ConnectionService connection = new();
+            score.CreateTime = DateTime.Now;
+            bool success = connection.AddScore(score);
+
+            if (success)
+                return Ok("Score registered successfully.");
+
+            return StatusCode(500, "An error occurred while registering the score.");
+        }
+
     }
 }

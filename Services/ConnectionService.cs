@@ -113,5 +113,33 @@ namespace HighScoreAPI.Services
             return scores;
         }
 
+        public bool AddScore(ScoreEntity score)
+        {
+            try
+            {
+                OpenConnection();
+
+                string query = @"INSERT INTO score_games (game_code, player_name, player_score, create_time) 
+                         VALUES (@gameCode, @playerName, @playerScore, @createTime);";
+
+                using var cmd = new NpgsqlCommand(query, _connection);
+                cmd.Parameters.AddWithValue("gameCode", score.GameCode ?? string.Empty);
+                cmd.Parameters.AddWithValue("playerName", score.PlayerName ?? string.Empty);
+                cmd.Parameters.AddWithValue("playerScore", score.PlayerScore);
+                cmd.Parameters.AddWithValue("createTime", score.CreateTime);
+
+                int rowsAffected = cmd.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao adicionar a pontuação: " + ex.Message);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
     }
 }
